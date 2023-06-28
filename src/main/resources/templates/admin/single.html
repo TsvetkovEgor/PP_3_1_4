@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<button onclick="location.href='/admin'">To admin page</button>
+<table border="1">
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Mail</th>
+        <th>Password</th>
+        <th>Roles:</th>
+    </tr>
+    <tr>
+        <td th:text="${userById.getId()}">Id</td>
+        <td th:text="${userById.getUsername()}">Name</td>
+        <td th:text="${userById.getMail()}">Milo</td>
+        <td th:text="${userById.getPassword()}">pass</td>
+        <td th:text="${userById.getRoles()}">Roles</td>
+    </tr>
+</table>
+<a th:href="@{/admin/{id}/edit(id=${userById.getId()})}">Edit user info</a>
+<form th:method="DELETE" th:action="@{/admin/{id}(id=${userById.getId()})}">
+    <input type="submit" value="Delete"/>
+</form>
+<button onclick="location.href='/logout'">LOGOUT</button>
+</body>
+</html>

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+    <title>Profile</title>
+</head>
+<body>
+<h1>Профиль аутентифицированного пользователя: </h1>
+
+<table border="1">
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Mail</th>
+        <th>Password</th>
+        <th>Roles:</th>
+    </tr>
+    <tr>
+        <td th:text="${userById.getId()}">Id</td>
+        <td th:text="${userById.getUsername()}">Name</td>
+        <td th:text="${userById.getMail()}">Milo</td>
+        <td th:text="${userById.getPassword()}">pass</td>
+        <td th:text="${userById.getRoles()}">Roles</td>
+    </tr>
+</table>
+<th:block th:if="${isAdmin}">
+    <td>
+        <button onclick="location.href='/admin'">To admin page</button>
+    </td>
+</th:block>
+<button onclick="location.href='/logout'">LOGOUT</button>
+</body>
+</html>
