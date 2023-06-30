@@ -17,6 +17,7 @@ import java.util.Optional;
 
 
 @Service
+@Transactional(readOnly = true)
 public class UserServiceImp implements UserService {
 
     UserRepository userRepository;
@@ -29,7 +30,6 @@ public class UserServiceImp implements UserService {
     }
 
     @Override
-    @Transactional
     public User findByUsername(String username) {
         return userRepository.findByUsername(username);
     }
@@ -47,10 +47,20 @@ public class UserServiceImp implements UserService {
     }
 
     @Override
-    @Transactional
     public User getUserById(int id) {
         Optional<User> byId = userRepository.findById(id);
-        return byId.orElseThrow(()-> new EntityNotFoundException("User not found. ID: "+ id));
+        return byId.orElseThrow(() -> new EntityNotFoundException("User not found. ID: " + id));
+    }
+
+    @Transactional
+    @Override
+    public void update(User user) {
+        User userIntoDB = getUserById(user.getId());
+        userIntoDB.setUsername(user.getUsername());
+        userIntoDB.setPassword(user.getPassword());
+        userIntoDB.setMail(user.getMail());
+        userIntoDB.setRoles(user.getRoles());
+        save(user);
     }
 
     @Override
@@ -60,5 +70,10 @@ public class UserServiceImp implements UserService {
             throw new UsernameNotFoundException(String.format("User '%s' not found", username));
         }
         return user;
+    }
+
+    @Transactional
+    public void delete(int id) {
+        userRepository.delete(getUserById(id));
     }
 }

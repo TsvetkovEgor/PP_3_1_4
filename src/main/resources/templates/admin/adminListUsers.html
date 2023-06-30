@@ -1,4 +1,7 @@
 <!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -11,8 +14,8 @@
 <table border="1">
     <tr>
         <th>Name</th>
-        <th>Last name</th>
-        <th>Mail</th>
+        <th>mail</th>
+        <th>role</th>
     </tr>
     <tr th:each="user: ${users}">
         <td><a th:href="@{/admin/{id}(id=${user.getId})}" th:text="${user.getUsername}">Name</a></td>

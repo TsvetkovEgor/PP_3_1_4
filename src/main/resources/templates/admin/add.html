@@ -1,14 +1,19 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
 </head>
 <body>
+<button onclick="location.href='/admin'">To admin page</button>
 <form th:method="POST" th:action="@{/admin}" th:object="${user}">
 
-    <label for="username">Name </label>
-    <input type="text" th:field="*{username}" id="username"/>
+    <div style="color:red" th:if="${#fields.hasErrors('id')}" th:errors="*{id}">Error</div>
+    <br/>
+
+    <label for="username">Username:</label>
+    <input type="text" id="username" th:field="*{username}" required/>
     <div style="color:red" th:if="${#fields.hasErrors('username')}" th:errors="*{username}">Error</div>
     <br/>
 
@@ -22,14 +27,19 @@
     <div style="color:red" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Error</div>
     <br/>
 
-    <label>Roles:</label>
-    <div th:each="role : ${allRoles}">
-        <div>
-            <input type="checkbox" name="roleIds" th:value="${role.id}" th:text="${role.name}"/>
+    <label>Roles:
+        <input type="checkbox" th:each="role : ${roles}" th:text="${role.role}" th:value="${role.id}"
+               th:field="*{roles}"/>
+    </label>
+    <div style="color:red">
+        <div th:if="${#fields.hasErrors('roles')}">
+            <p th:each="err : ${#fields.errors('roles')}" th:text="${err}"></p>
         </div>
     </div>
 
+
     <input type="submit" value="Add"/>
+    <button onclick="location.href='/logout'">LOGOUT</button>
 </form>
 </body>
 </html>
