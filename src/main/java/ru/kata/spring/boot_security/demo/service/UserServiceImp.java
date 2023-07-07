@@ -35,6 +35,12 @@ public class UserServiceImp implements UserService {
     }
 
     @Override
+    public User getUserByMail(String mail) {
+        Optional<User> user = userRepository.findByMail(mail);
+        return user.orElseThrow(() -> new EntityNotFoundException("User not found. ID: " + mail));
+    }
+
+    @Override
     public List<User> getUsersList() {
         return userRepository.findAll();
     }
@@ -64,12 +70,9 @@ public class UserServiceImp implements UserService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = findByUsername(username);
-        if (user == null) {
-            throw new UsernameNotFoundException(String.format("User '%s' not found", username));
-        }
-        return user;
+    public UserDetails loadUserByUsername(String mail) throws UsernameNotFoundException {
+        return userRepository.findByMail(mail)
+                .orElseThrow(() -> new UsernameNotFoundException("User with mail '" + mail + "' not found"));
     }
 
     @Transactional

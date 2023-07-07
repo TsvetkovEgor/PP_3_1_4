@@ -9,6 +9,7 @@ import ru.kata.spring.boot_security.demo.service.UserService;
 
 import javax.annotation.PostConstruct;
 import java.util.Collections;
+import java.util.Set;
 
 @Component
 public class DatabaseInit {
@@ -36,13 +37,12 @@ public class DatabaseInit {
                 "user",
                 "user@mail.ru",
                 "user",
-                Collections.singletonList(roleService.findRoleByName("ROLE_USER"))));
+                Set.of(roleService.findRoleByName("ROLE_USER"))));
 
         userService.save(new User(
                 "admin",
                 "admin@mail.ru",
                 "admin",
-                Collections.singletonList(roleService.findRoleByName("ROLE_ADMIN"))));
-
+                Set.of(roleService.findRoleByName("ROLE_ADMIN"))));
     }
 }

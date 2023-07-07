@@ -20,7 +20,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -40,7 +40,7 @@ public class User implements UserDetails {
 
     @NotEmpty(message = "Заполните поле")
     @Email(message = "Не корректный адрес")
-    @Column(name = "email")
+    @Column(name = "email", unique = true)
     private String mail;
 
     @NotEmpty(message = "Заполните поле")
@@ -49,9 +49,9 @@ public class User implements UserDetails {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "roles_id")
     )
-    private List<Role> roles;
+    private Set<Role> roles;
 
-    public User(String username, String mail, String password, List<Role> roles) {
+    public User(String username, String mail, String password, Set<Role> roles) {
         this.username = username;
         this.password = password;
         this.mail = mail;
@@ -94,11 +94,11 @@ public class User implements UserDetails {
         this.mail = mail;
     }
 
-    public List<Role> getRoles() {
+    public Set<Role> getRoles() {
         return roles;
     }
 
-    public void setRoles(List<Role> roles) {
+    public void setRoles(Set<Role> roles) {
         this.roles = roles;
     }
     public void addRoles(Role roles) {
@@ -106,9 +106,7 @@ public class User implements UserDetails {
     }
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return roles.stream()
-                .map(role -> new SimpleGrantedAuthority(role.getRole()))
-                .collect(Collectors.toList());
+        return getRoles();
     }
     @Override
     public boolean isAccountNonExpired() {

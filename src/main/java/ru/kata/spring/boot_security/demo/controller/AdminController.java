@@ -1,6 +1,7 @@
 package ru.kata.spring.boot_security.demo.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -19,7 +20,7 @@ import ru.kata.spring.boot_security.demo.service.UserService;
 import ru.kata.spring.boot_security.demo.util.UserValidator;
 
 import javax.validation.Valid;
-import java.util.List;
+import java.util.Set;
 
 @Controller
 @RequestMapping("/admin")
@@ -39,19 +40,21 @@ public class AdminController {
 
     @GetMapping
     public String getAllUsers(Model model) {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        model.addAttribute("userById",user);
         model.addAttribute("users", userService.getUsersList());
+        Set<Role> roles = roleService.getRoles();
+        model.addAttribute("roles", roles);
         return "admin/adminListUsers";
     }
 
-    @GetMapping("/{id}")
-    public String getUserById(@PathVariable int id, Model model) {
-        model.addAttribute("userById", userService.getUserById(id));
-        return "admin/single";
-    }
-
     @GetMapping("/add")
-    public String newUser(@ModelAttribute("user") User user, Model model) {
-        List<Role> roles = roleService.getRoles();
+    public String newUser(Model model) {
+        User userAutentificated = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        model.addAttribute("userById", userAutentificated);
+        User user = new User();
+        Set<Role> roles = roleService.getRoles();
+        model.addAttribute("user", user);
         model.addAttribute("roles", roles);
         return "admin/add";
     }
@@ -59,28 +62,26 @@ public class AdminController {
     @PostMapping
     public String createUser(@ModelAttribute("user") @Valid User user,
                              BindingResult bindingResult, Model model) {
+        User userAutentificated = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         userValidator.validate(user, bindingResult);
         if (bindingResult.hasErrors()) {
             model.addAttribute("roles", roleService.getRoles());
+            model.addAttribute("userById", userAutentificated);
             return "admin/add";
         }
         userService.save(user);
         return "redirect:/admin";
     }
 
-    @GetMapping("/{id}/edit")
-    public String edit(@PathVariable("id") int id, Model model) {
-        model.addAttribute("user", userService.getUserById(id));
-        List<Role> roles = roleService.getRoles();
-        model.addAttribute("roles", roles);
-        return "admin/edit";
-    }
-
     @PatchMapping("/{id}/update")
     public String update(@ModelAttribute("user") @Valid User user, BindingResult bindingResult, Model model) {
+        User userAutentificated = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        userValidator.validate(user, bindingResult);
         if (bindingResult.hasErrors()) {
+            model.addAttribute("user", user);
+            model.addAttribute("userById", userAutentificated);
             model.addAttribute("roles", roleService.getRoles());
-            return "admin/edit";
+            return "redirect:/admin";
         }
         userService.update(user);
         return "redirect:/admin";
