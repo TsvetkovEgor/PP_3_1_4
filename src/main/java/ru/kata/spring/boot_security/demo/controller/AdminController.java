@@ -79,9 +79,12 @@ public class AdminController {
         userValidator.validate(user, bindingResult);
         if (bindingResult.hasErrors()) {
             model.addAttribute("user", user);
-            model.addAttribute("userById", userAutentificated);
-            model.addAttribute("roles", roleService.getRoles());
-            return "redirect:/admin";
+            model.addAttribute("userAutentificated", userAutentificated);
+            model.addAttribute("usernameErrors", bindingResult.getFieldErrors("username"));
+            model.addAttribute("mailErrors", bindingResult.getFieldErrors("mail"));
+            model.addAttribute("passwordErrors", bindingResult.getFieldErrors("password"));
+            model.addAttribute("rolesErrors", bindingResult.getFieldErrors("roles"));
+            return "admin/fatality";
         }
         userService.update(user);
         return "redirect:/admin";
